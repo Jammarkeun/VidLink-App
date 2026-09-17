@@ -645,6 +645,8 @@ body {
 .download-link {
     background: var(--primary-gradient);
     color: #fff;
+    border: 0;
+    width: 100%;
     text-decoration: none;
     text-align: center;
     padding: 10px;
@@ -652,6 +654,8 @@ body {
     font-weight: 600;
     font-size: 14px;
     display: flex;
+    cursor: pointer;
+    font-family: inherit;
     align-items: center;
     justify-content: center;
     gap: 8px;

@@ -211,17 +211,65 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${fmt.acodec}</span>
                     </div>
                 </div>
-                <a href="/api/download?${downloadQuery}" class="download-link" target="_blank" download>
+                <button type="button" class="download-link" data-download-query="${encodeURIComponent(downloadQuery)}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
                     Download Format
-                </a>
+                </button>
             `;
             formatsGrid.appendChild(card);
         });
+
+        formatsGrid.querySelectorAll('[data-download-query]').forEach((button) => {
+            button.addEventListener('click', () => downloadFormat(button));
+        });
+    }
+
+    async function downloadFormat(button) {
+        const query = decodeURIComponent(button.dataset.downloadQuery);
+        const originalText = button.textContent.trim();
+        button.disabled = true;
+        button.textContent = 'Preparing download...';
+
+        try {
+            const response = await fetch(`/api/download?${query}`);
+            const contentType = response.headers.get('content-type') || '';
+            if (!response.ok || contentType.includes('application/json')) {
+                const payload = await response.json().catch(() => ({}));
+                throw new Error(payload.error || `Download failed (${response.status}).`);
+            }
+
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = getDownloadFilename(response) || 'vidlink-download';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(objectUrl);
+        } catch (error) {
+            showError('Download Failed', error.message);
+        } finally {
+            button.disabled = false;
+            button.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                ${originalText}
+            `;
+        }
+    }
+
+    function getDownloadFilename(response) {
+        const disposition = response.headers.get('content-disposition') || '';
+        const match = disposition.match(/filename="?([^";]+)"?/i);
+        return match ? match[1] : '';
     }
 
     closePlayerBtn.addEventListener('click', () => {
