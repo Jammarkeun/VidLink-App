@@ -180,7 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: fmt.url,
                 filename: `${mediaTitle.textContent.replace(/[^a-zA-Z0-9_\-]/g, '_')}_${fmt.quality}.${fmt.ext}`,
                 download_type: fmt.download_type,
-                headers: JSON.stringify(fmt.http_headers || {})
+                headers: JSON.stringify(fmt.http_headers || {}),
+                format_id: fmt.format_id || '',
+                source_url: fmt.source_url || ''
             }).toString();
 
             card.innerHTML = `

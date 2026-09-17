@@ -54,6 +54,8 @@ def download_media():
     filename = request.args.get('filename', 'video.mp4')
     filename = re.sub(r'[^A-Za-z0-9._-]', '_', os.path.basename(filename)) or 'video.mp4'
     download_type = request.args.get('download_type', 'direct')
+    format_id = request.args.get('format_id')
+    source_url = request.args.get('source_url')
     video_url = request.args.get('video_url')
     audio_url = request.args.get('audio_url')
     headers = {}
@@ -73,7 +75,9 @@ def download_media():
 
     try:
         success = False
-        if video_url and audio_url:
+        if download_type == 'ytdlp_format' and source_url and format_id:
+            success = MediaDownloader.download_ytdlp(source_url, format_id, output_filepath)
+        elif video_url and audio_url:
             # Merge separate video & audio streams using FFmpeg
             success = MediaDownloader.merge_video_audio(video_url, audio_url, output_filepath, headers=headers)
         elif download_type in ['hls', 'dash']:

@@ -2,6 +2,7 @@ import os
 import tempfile
 import subprocess
 import requests
+import yt_dlp
 from typing import Optional, Dict, Any, Generator
 from .ffmpeg_utils import get_ffmpeg_executable
 
@@ -10,6 +11,27 @@ class MediaDownloader:
     Downloader Engine for VidLink.
     Handles Direct HTTP file downloads, HLS stream capture, and FFmpeg video+audio merging.
     """
+
+    @staticmethod
+    def download_ytdlp(source_url: str, format_id: str, output_path: str) -> bool:
+        """Re-resolve a provider format so signed URLs are fresh at download time."""
+        try:
+            options = {
+                'format': format_id,
+                'outtmpl': output_path,
+                'noplaylist': True,
+                'quiet': True,
+                'no_warnings': True,
+                'overwrites': True,
+                'remote_components': {'ejs': ['github']},
+                'extractor_args': {'youtube': {'player_client': ['android_vr', 'web']}},
+                'js_runtimes': {'deno': {'path': os.environ.get('DENO_PATH', 'deno')}},
+            }
+            with yt_dlp.YoutubeDL(options) as ydl:
+                ydl.download([source_url])
+            return os.path.exists(output_path) and os.path.getsize(output_path) > 0
+        except Exception:
+            return False
 
     @staticmethod
     def download_direct(url: str, output_path: str, headers: Optional[Dict[str, str]] = None) -> bool:

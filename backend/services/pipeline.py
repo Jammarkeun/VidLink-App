@@ -88,6 +88,7 @@ class MediaExtractionPipeline:
                     aggregated_thumbnail = aggregated_thumbnail or result.get('thumbnail')
 
                     for fmt in result['formats']:
+                        fmt.setdefault('source_url', url)
                         # Generate unique key to prevent duplicate formats
                         fmt_key = (fmt.get('url'), fmt.get('resolution'), fmt.get('ext'))
                         if fmt_key not in seen_format_keys:
@@ -165,7 +166,8 @@ class MediaExtractionPipeline:
                 "stream_type": stream_type,
                 "badge": badge,
                 "download_type": fmt.get('download_type', 'direct'),
-                "http_headers": fmt.get('http_headers')
+                "http_headers": fmt.get('http_headers'),
+                "source_url": fmt.get('source_url')
             })
         
         # Sort formats logically: highest resolution/height first, then video+audio, then audio
