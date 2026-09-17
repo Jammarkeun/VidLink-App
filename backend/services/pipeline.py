@@ -78,6 +78,9 @@ class MediaExtractionPipeline:
                 executed_strategies.append(extractor.name)
                 result = extractor.analyze(url)
 
+                if not result and getattr(extractor, 'last_error', None):
+                    extraction_errors.append(f"{extractor.name}: {extractor.last_error}")
+
                 if result and result.get('formats'):
                     successful_extractor = extractor.name
                     aggregated_title = aggregated_title or result.get('title')

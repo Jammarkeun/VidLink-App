@@ -1,4 +1,5 @@
 import yt_dlp
+import os
 from typing import Dict, List, Optional, Any
 from .base import BaseExtractor
 
@@ -22,7 +23,10 @@ class YtDlpExtractor(BaseExtractor):
             'extract_flat': False,
             'skip_download': True,
             'ignoreerrors': True,
+            'remote_components': {'ejs': ['github']},
         }
+        deno_path = os.environ.get('DENO_PATH', 'deno')
+        ydl_opts['js_runtimes'] = {'deno': {'path': deno_path}}
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -127,4 +131,5 @@ class YtDlpExtractor(BaseExtractor):
 
         except Exception as e:
             # yt-dlp failed or raised error (e.g. auth required, private content)
+            self.last_error = str(e)
             return None
