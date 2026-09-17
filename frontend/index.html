@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidLink — Universal Media Extraction Engine</title>
+    <meta name="description" content="Extract downloadable video and audio media formats from any publicly accessible website url without domain restrictions.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="ambient-background">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="3" ry="3"></rect>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>VidLink</h1>
+                    <span class="logo-badge">Universal Extractor</span>
+                </div>
+            </div>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span id="status-text">Engine Ready • No Whitelist</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <h2 class="hero-title">Paste URL from <span class="gradient-text">Any Website</span></h2>
+                <p class="hero-subtitle">
+                    Multi-strategy media extraction architecture supporting direct URLs, HTML5 video/audio, OpenGraph, HLS/DASH streams, and manifest representations.
+                </p>
+
+                <!-- Input Box -->
+                <div class="input-card glass-panel">
+                    <div class="input-wrapper">
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </div>
+                        <input type="url" id="url-input" placeholder="Paste any video or webpage URL (e.g. https://website.com/watch/123 or direct file.mp4)" autocomplete="off">
+                        <button type="button" id="clear-btn" class="icon-btn" title="Clear input" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" id="analyze-btn" class="primary-btn">
+                        <span class="btn-text">Analyze Media</span>
+                        <div class="spinner" id="analyze-spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Loading Skeleton -->
+            <div id="loading-card" class="glass-panel card-skeleton" style="display: none;">
+                <div class="skeleton-line title-skel"></div>
+                <div class="skeleton-line meta-skel"></div>
+                <div class="skeleton-grid">
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="error-card" class="error-panel glass-panel" style="display: none;">
+                <div class="error-header">
+                    <div class="error-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="error-content">
+                        <h4 id="error-title">Extraction Error</h4>
+                        <p id="error-message">No media detected.</p>
+                    </div>
+                </div>
+                <div id="error-details" class="error-details"></div>
+            </div>
+
+            <!-- Analysis Results Section -->
+            <section id="results-card" class="results-section glass-panel" style="display: none;">
+                <!-- Media Summary Header -->
+                <div class="media-header">
+                    <div class="thumbnail-wrapper" id="thumb-container">
+                        <div class="thumb-placeholder" id="thumb-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </div>
+                        <img id="media-thumb" class="media-thumb" src="" alt="Thumbnail" style="display: none;">
+                    </div>
+                    <div class="media-meta">
+                        <div class="meta-badges">
+                            <span id="domain-badge" class="badge badge-domain">domain.com</span>
+                            <span id="strategy-badge" class="badge badge-strategy">Multi-Layer Strategy</span>
+                            <span id="duration-badge" class="badge badge-duration" style="display: none;">00:00</span>
+                        </div>
+                        <h3 id="media-title" class="media-title">Extracted Media Resource</h3>
+                        <p class="media-subtext">
+                            Discovered <strong id="format-count">0</strong> format representations without artificial domain caps.
+                        </p>
+                    </div>
+                    <button type="button" id="preview-btn" class="secondary-btn" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span>Preview Player</span>
+                    </button>
+                </div>
+
+                <!-- Video Preview Drawer -->
+                <div id="player-drawer" class="player-drawer glass-panel-inner" style="display: none;">
+                    <div class="drawer-header">
+                        <h4>Inline Preview</h4>
+                        <button type="button" id="close-player-btn" class="close-btn">&times;</button>
+                    </div>
+                    <video id="preview-video" controls class="video-player"></video>
+                </div>
+
+                <!-- Format Filter Tabs -->
+                <div class="filter-controls">
+                    <div class="filter-tabs" id="filter-tabs">
+                        <button type="button" class="tab-btn active" data-filter="all">All Formats (<span id="cnt-all">0</span>)</button>
+                        <button type="button" class="tab-btn" data-filter="video_audio">Video + Audio (<span id="cnt-va">0</span>)</button>
+                        <button type="button" class="tab-btn" data-filter="video_only">Video Only (<span id="cnt-vo">0</span>)</button>
+                        <button type="button" class="tab-btn" data-filter="audio_only">Audio Only (<span id="cnt-ao">0</span>)</button>
+                        <button type="button" class="tab-btn" data-filter="manifest">Manifests (<span id="cnt-manifest">0</span>)</button>
+                    </div>
+                </div>
+
+                <!-- Format Grid -->
+                <div class="formats-grid" id="formats-grid">
+                    <!-- Dynamic Format Cards Generated by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>VidLink Universal Media Extractor Architecture • Open Media Pipeline</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
