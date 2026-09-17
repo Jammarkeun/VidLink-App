@@ -85,7 +85,7 @@ def download_media():
 
         if not success and download_type not in ['hls', 'dash'] and not (video_url and audio_url):
             # Fallback to direct download if FFmpeg fails or is absent
-            success = MediaDownloader.download_direct(media_url, output_filepath)
+            success = MediaDownloader.download_direct(media_url, output_filepath, headers=headers)
 
         if success and os.path.exists(output_filepath):
             return send_file(
