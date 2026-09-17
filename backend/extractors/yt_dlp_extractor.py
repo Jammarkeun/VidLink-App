@@ -24,6 +24,11 @@ class YtDlpExtractor(BaseExtractor):
             'skip_download': True,
             'ignoreerrors': True,
             'remote_components': {'ejs': ['github']},
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android_vr', 'web']
+                }
+            },
         }
         deno_path = os.environ.get('DENO_PATH', 'deno')
         ydl_opts['js_runtimes'] = {'deno': {'path': deno_path}}
